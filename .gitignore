@@ -1,0 +1,31 @@
+# Environment variables (Crucial: keeps your API Keys secret!)
+.env
+.env*.local
+.env.production
+
+# Python virtual environment
+venv/
+env/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Diagnostic/Temporary scripts
+verify_key.py
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.log
