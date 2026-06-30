@@ -27,8 +27,8 @@ Pastikan Anda sudah menginstal Python (versi 3.8 - 3.11 direkomendasikan) pada k
 
 ### 2. Clone Repositori
 ```bash
-git clone https://github.com/username-anda/semhas-ai.git
-cd semhas-ai
+git clone https://github.com/pukiskun/Semhas.AI.git
+cd Semhas.AI
 ```
 
 ### 3. Instal Dependencies
