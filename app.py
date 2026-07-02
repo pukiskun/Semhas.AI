@@ -7,25 +7,113 @@ from simulation import SemhasSimulation, PERSONAS
 # Load environment variables
 load_dotenv()
 
+# Create custom theme for a premium academic look
+theme = gr.themes.Soft(
+    primary_hue="indigo",
+    secondary_hue="slate",
+    neutral_hue="slate",
+    font=[gr.themes.GoogleFont("Plus Jakarta Sans"), "system-ui", "sans-serif"]
+)
+
 # CSS for a premium, academic-defense look
 CUSTOM_CSS = """
-.container { max-width: 1200px; margin: 0 auto; }
-.header { text-align: center; margin-bottom: 20px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-.header h1 { margin: 0; font-size: 2.2em; font-weight: 700; }
-.header p { margin: 5px 0 0 0; opacity: 0.9; }
-.examiner-card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-.rag-box { background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; }
-.rag-title { color: #166534; font-weight: 600; margin-bottom: 8px; font-size: 1.1em; display: flex; align-items: center; gap: 8px; }
-.feedback-box { background-color: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; padding: 20px; }
-.btn-primary { background: #2563eb !important; color: white !important; }
-.btn-success { background: #16a34a !important; color: white !important; }
+.container { max-width: 100%; margin: 0 auto; padding: 15px; }
+.header { 
+    text-align: center; 
+    margin-bottom: 20px; 
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
+    color: white; 
+    padding: 25px 20px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.header h1 { 
+    margin: 0; 
+    font-size: 2.2em; 
+    font-weight: 800; 
+    letter-spacing: -0.025em;
+    background: linear-gradient(to right, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.header p { 
+    margin: 6px 0 0 0; 
+    font-size: 1.05em;
+    color: #94a3b8; 
+}
+.sidebar-panel {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+.examiner-card { 
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
+    border-left: 5px solid #6366f1; 
+    border-radius: 12px; 
+    padding: 15px; 
+    margin-bottom: 0px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.rag-box { 
+    background: #fafaf9; 
+    border: 1px solid #e7e5e4; 
+    border-left: 5px solid #10b981; 
+    border-radius: 12px; 
+    padding: 15px;
+    height: 480px;
+    overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.feedback-box { 
+    background: #faf5ff; 
+    border: 1px solid #f3e8ff; 
+    border-left: 5px solid #a855f7; 
+    border-radius: 12px; 
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.btn-primary { 
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important; 
+    color: white !important; 
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
+}
+.btn-primary:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3) !important;
+}
+.btn-success { 
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important; 
+    color: white !important; 
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+}
+.btn-success:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3) !important;
+}
+#process-status-text {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #475569;
+}
 """
 
 def process_file_ui(pdf_file, api_key):
     """Callback to process the uploaded PDF file."""
     if not pdf_file:
         return (
-            gr.update(value="### Silakan unggah file PDF thesis Anda."),
+            gr.update(value="⚠️ Silakan unggah file PDF thesis Anda."),
+            gr.update(value="*Menunggu dokumen untuk preview...*"),
             gr.update(visible=False),
             gr.update(interactive=False),
             None,
@@ -36,7 +124,8 @@ def process_file_ui(pdf_file, api_key):
     active_key = api_key.strip() if api_key else os.getenv("GROQ_API_KEY")
     if not active_key:
         return (
-            gr.update(value="### ❌ Error: API Key tidak ditemukan. Silakan masukkan Groq API Key Anda."),
+            gr.update(value="❌ Error: API Key tidak ditemukan."),
+            gr.update(value="### ❌ Gagal Memproses\nAPI Key tidak ditemukan. Masukkan Groq API Key."),
             gr.update(visible=False),
             gr.update(interactive=False),
             None,
@@ -51,18 +140,21 @@ def process_file_ui(pdf_file, api_key):
         # Parse PDF and build vector database
         abstract_preview, chunk_count = rag_engine.process_pdf(pdf_file.name)
         
-        status_text = f"""
-        ### 🟢 Dokumen Berhasil Diproses!
-        *   **File**: `{os.path.basename(pdf_file.name)}`
-        *   **Total Chunks**: `{chunk_count}`
-        *   **Model Embedding**: `all-MiniLM-L6-v2 (Lokal Offline)`
+        short_status = f"🟢 RAG Sukses! ({chunk_count} Chunks)"
         
-        **Abstrak / Pendahuluan Preview**:
-        {abstract_preview}
-        """
+        preview_text = f"""### 📄 Abstrak & Deskripsi Dokumen
+*   **Nama File**: `{os.path.basename(pdf_file.name)}`
+*   **Total Chunks**: `{chunk_count}`
+*   **Model Embedding**: `all-MiniLM-L6-v2 (Lokal Offline)`
+
+---
+### 🔍 Abstrak Preview:
+{abstract_preview}
+"""
         
         return (
-            gr.update(value=status_text),
+            gr.update(value=short_status),
+            gr.update(value=preview_text),
             gr.update(visible=True),
             gr.update(interactive=True),
             rag_engine,
@@ -70,7 +162,8 @@ def process_file_ui(pdf_file, api_key):
         )
     except Exception as e:
         return (
-            gr.update(value=f"### ❌ Terjadi Kesalahan saat memproses PDF:\n`{str(e)}`"),
+            gr.update(value=f"❌ Error: {str(e)}"),
+            gr.update(value=f"### ❌ Gagal Memproses PDF\n`{str(e)}`"),
             gr.update(visible=False),
             gr.update(interactive=False),
             None,
@@ -80,7 +173,21 @@ def process_file_ui(pdf_file, api_key):
 def start_simulation_ui(simulation, rag):
     """Starts the simulation interview session."""
     if not simulation or not rag:
-        return [], "", "", "", "", gr.update(interactive=False), gr.update(interactive=False)
+        return (
+            [], 
+            "", 
+            "", 
+            "", 
+            "", 
+            gr.update(interactive=False), 
+            gr.update(interactive=False), 
+            gr.update(visible=False),
+            gr.update(interactive=True),
+            gr.update(interactive=True),
+            gr.update(interactive=True),
+            gr.update(interactive=True),
+            gr.update()
+        )
         
     # Start the session
     first_page_preview = rag.chunks[0] if rag.chunks else "Thesis Paper"
@@ -107,7 +214,12 @@ def start_simulation_ui(simulation, rag):
         "Belum ada data retrieved untuk pertanyaan pembuka.",
         gr.update(interactive=True),  # Enable input text
         gr.update(interactive=False), # Disable eval button
-        gr.update(visible=True)        # Show active question card
+        gr.update(visible=True),       # Show active question card
+        gr.update(interactive=False), # Disable API key input
+        gr.update(interactive=False), # Disable PDF file uploader
+        gr.update(interactive=False), # Disable process button
+        gr.update(interactive=False), # Disable start button
+        gr.update(selected="rag_tab") # Auto-select RAG Context tab!
     )
 
 def submit_answer_ui(student_answer, chatbot_history, simulation):
@@ -192,73 +304,78 @@ with gr.Blocks(title="Semhas Mock Interview RAG") as demo:
         gr.Markdown(
             """
             # 🎓 Semhas Mock Interview Simulator (RAG)
-            ##### Uji pemahaman skripsi Anda dengan panel penguji bertenaga AI yang mempelajari dokumen Anda secara mendalam.
+            Uji pemahaman skripsi Anda dengan panel penguji bertenaga AI yang mempelajari dokumen Anda secara mendalam.
             """
         )
         
     with gr.Row(elem_classes="container"):
         
-        # Left Panel (Settings & Processing)
-        with gr.Column(scale=4):
-            gr.Markdown("### 📂 Langkah 1: Unggah Dokumen Skripsi")
+        # Left Column (Setup Steps Wizard)
+        with gr.Column(scale=3, elem_classes="sidebar-panel"):
+            gr.Markdown("### 📋 Persiapan Sidang")
             
-            # API Key input
+            # Step 1
             api_key_input = gr.Textbox(
-                label="Groq API Key", 
-                placeholder="Masukkan Groq API Key Anda (atau kosongkan jika sudah diset di .env)", 
+                label="1️⃣ Groq API Key (Opsional)", 
+                placeholder="Kosongkan jika menggunakan file .env", 
                 type="password"
             )
             
-            # PDF File uploader
+            # Step 2
             file_uploader = gr.File(
-                label="Unggah PDF Skripsi/Thesis (Format PDF)", 
-                file_types=[".pdf"]
+                label="2️⃣ Unggah PDF Skripsi/Thesis", 
+                file_types=[".pdf"],
+                height=65
             )
             
-            process_btn = gr.Button("Proses Dokumen & Bangun RAG", elem_classes="btn-primary")
+            # Step 3 & 4 Actions
+            with gr.Row():
+                process_btn = gr.Button("3️⃣ Proses RAG", elem_classes="btn-primary")
+                start_btn = gr.Button(
+                    "4️⃣ Mulai Sidang", 
+                    elem_classes="btn-success", 
+                    interactive=False
+                )
             
-            # Processing status report
-            process_status = gr.Markdown("*Dokumen belum diunggah.*")
+            process_status = gr.Markdown("*Status: Menunggu dokumen...*", elem_id="process-status-text")
             
-            # Start session button
-            start_btn = gr.Button(
-                "Mulai Simulasi Sidang Semhas", 
-                elem_classes="btn-success", 
-                interactive=False
-            )
-            
-        # Right Panel (Interactive Defense Simulation)
-        with gr.Column(scale=8):
-            
-            # Tabs for Simulation Console and Evaluation Report
-            with gr.Tabs():
+        # Middle Column (Interactive Chat Console)
+        with gr.Column(scale=6):
+            with gr.Group():
+                with gr.Row(visible=False) as session_details_row:
+                    current_examiner_card = gr.Markdown(elem_classes="examiner-card")
+                    question_status_lbl = gr.Label(label="Status Pertanyaan")
                 
-                with gr.Tab("💬 Simulasi Ujian"):
-                    
-                    with gr.Row(visible=False) as session_details_row:
-                        current_examiner_card = gr.Markdown(elem_classes="examiner-card")
-                        question_status_lbl = gr.Label(label="Status Pertanyaan")
-                    
-                    chatbot = gr.Chatbot(
-                        label="Ruang Sidang Semhas", 
-                        height=400
+                chatbot = gr.Chatbot(
+                    label="Ruang Sidang Semhas", 
+                    height=500
+                )
+                
+                with gr.Row():
+                    student_input = gr.Textbox(
+                        show_label=False, 
+                        placeholder="Ketik jawaban sanggahan Anda di sini...",
+                        interactive=False,
+                        scale=9
+                    )
+                    submit_btn = gr.Button("Kirim", scale=1, elem_classes="btn-primary")
+            
+        # Right Column (Inspector Panels for Context & Evaluation)
+        with gr.Column(scale=3):
+            with gr.Tabs() as right_tabs:
+                with gr.Tab("📄 Preview Dokumen", id="preview_tab"):
+                    document_preview_panel = gr.Markdown(
+                        value="*Silakan unggah dan proses skripsi Anda untuk melihat preview dokumen di sini.*",
+                        elem_classes="rag-box"
                     )
                     
-                    with gr.Row():
-                        student_input = gr.Textbox(
-                            show_label=False, 
-                            placeholder="Ketik jawaban sanggahan Anda di sini...",
-                            interactive=False
-                        )
-                        submit_btn = gr.Button("Kirim Jawaban", scale=0)
-                        
-                    # Side block showing RAG Context
+                with gr.Tab("🔍 RAG Context", id="rag_tab"):
                     rag_context_panel = gr.Markdown(
                         value="*Mulai simulasi untuk melihat context yang dibaca RAG.*", 
                         elem_classes="rag-box"
                     )
                     
-                with gr.Tab("📊 Hasil Evaluasi & Masukan"):
+                with gr.Tab("📊 Hasil Evaluasi", id="eval_tab"):
                     gr.Markdown("### Keputusan Panel Penguji")
                     
                     evaluate_btn = gr.Button(
@@ -278,7 +395,14 @@ with gr.Blocks(title="Semhas Mock Interview RAG") as demo:
     process_btn.click(
         fn=process_file_ui,
         inputs=[file_uploader, api_key_input],
-        outputs=[process_status, start_btn, start_btn, rag_state, simulation_state]
+        outputs=[
+            process_status, 
+            document_preview_panel, 
+            start_btn, 
+            start_btn, 
+            rag_state, 
+            simulation_state
+        ]
     )
     
     # 2. Starting simulation
@@ -293,7 +417,12 @@ with gr.Blocks(title="Semhas Mock Interview RAG") as demo:
             rag_context_panel, 
             student_input, 
             evaluate_btn,
-            session_details_row
+            session_details_row,
+            api_key_input,
+            file_uploader,
+            process_btn,
+            start_btn,
+            right_tabs
         ]
     )
     
@@ -318,4 +447,4 @@ with gr.Blocks(title="Semhas Mock Interview RAG") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch(css=CUSTOM_CSS)
+    demo.launch(css=CUSTOM_CSS, theme=theme)
