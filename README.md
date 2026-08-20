@@ -1,8 +1,19 @@
+---
+title: Semhas.AI
+emoji: 🎓
+colorFrom: indigo
+colorTo: purple
+sdk: gradio
+sdk_version: 6.19.0
+app_file: app.py
+pinned: false
+---
+
 # 🎓 Semhas.AI - RAG-Powered Thesis Defense Simulator
 
 Semhas.AI adalah aplikasi simulator sidang hasil (Semhas) atau sidang skripsi bertenaga AI. Aplikasi ini menggunakan teknologi **RAG (Retrieval-Augmented Generation)** lokal untuk membaca dokumen PDF thesis/skripsi pengguna secara mendalam dan mensimulasikan panel penguji akademis yang kritis secara interaktif.
 
-Proyek ini dirancang hemat biaya (**$0 server cost**) dengan menjalankan proses embedding/RAG secara lokal (offline) dan menggunakan model **Llama 3.3 70B** di Groq API untuk dialog interaktif.
+Proyek ini dirancang hemat biaya (**$0 server cost**) dengan menjalankan proses embedding/RAG secara lokal (offline) dan menggunakan model **Qwen 3.6 27B** di Groq API untuk dialog interaktif.
 
 ---
 
