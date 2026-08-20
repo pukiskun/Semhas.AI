@@ -61,5 +61,5 @@ Buka browser Anda dan akses tautan lokal yang tertera di terminal (biasanya **[h
 ## 💡 Tech Stack
 - **Frontend & App Interface**: Gradio
 - **Embedding & Vector Search**: Hugging Face `sentence-transformers` (`all-MiniLM-L6-v2` model) & NumPy (untuk cosine similarity lokal)
-- **Large Language Model (LLM)**: `llama-3.3-70b-versatile` via Groq SDK
+- **Large Language Model (LLM)**: `qwen/qwen3.6-27b` via Groq SDK
 - **PDF Parser**: PyPDF

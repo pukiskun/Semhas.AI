@@ -58,7 +58,7 @@ Instructions:
 }
 
 class SemhasSimulation:
-    def __init__(self, rag_engine: RAGEngine, model_name: str = "llama-3.3-70b-versatile", api_key: str = None):
+    def __init__(self, rag_engine: RAGEngine, model_name: str = "qwen/qwen3.6-27b", api_key: str = None):
         self.rag = rag_engine
         self.model_name = model_name
         self.api_key = api_key or os.getenv("GROQ_API_KEY")
